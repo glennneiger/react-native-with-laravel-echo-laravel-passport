@@ -7,3 +7,6 @@ Be sure to have react native epxo installed on your computer.
 # Commands to run:
 - npm install
 - npm start
+
+# TODO
+# Note to self. Laravel Echo and Passport files uploading soon...
