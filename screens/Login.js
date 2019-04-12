@@ -5,23 +5,30 @@ import {
   Button,
   StyleSheet,
   View,
-  TextInput
+  TextInput,
+  Clipboard
 } from 'react-native';
 import axios from 'axios';
 
 class Login extends Component {
 
   state = {
-    email: 'tim.poco01@gmail.com',
+    email: '8987273',
     password: 'timmy1420',
-    host: '192.168.0.138'
+    host: '192.168.1.13',
+    access_token: null
   };
+
+  async componentDidMount() {
+    var access_token = await Clipboard.getString();
+    this.setState({access_token});
+  }
 
   login = () => {
     axios.post(`http://${this.state.host}:8000/oauth/token`, {
         grant_type: 'password',
-        client_id: '6',
-        client_secret: 'ObTXXOAgGXIWjwT9UCG5VIs0E0oxPnHY2SXR4U1Z',
+        client_id: '3',
+        client_secret: 'dC7EkHJSMNVjeOoZANzyGvpAEnwAGXaDYHwTbZXh',
         username: this.state.email,
         password: this.state.password,
       })
@@ -32,6 +39,9 @@ class Login extends Component {
         } = response.data;
         if (token_type == "Bearer") alert('You are successfully logged in');
         console.log('Access token: ', access_token);
+
+        // Copy token to device clipboard
+        Clipboard.setString(access_token);
       })
       .catch(function (error) {
         console.log(error);

@@ -6,16 +6,22 @@ import {
   TextInput,
   StyleSheet,
   View,
-  Text
+  Text,
+  Clipboard
 } from 'react-native';
 
 import axios from 'axios';
 
 class CheckAuth extends Component {
   state = {
-    access_token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjZkYjJjMDcyODQyZmE0NTg1MGE3ODNjZTU2ZjBjMGJjZjAwNmQzOTRiYzY3Y2MwNGUwMTIwN2JmZWMzYTJkYWEzNTc4Yzk2NTRhMjBkYTA0In0.eyJhdWQiOiI2IiwianRpIjoiNmRiMmMwNzI4NDJmYTQ1ODUwYTc4M2NlNTZmMGMwYmNmMDA2ZDM5NGJjNjdjYzA0ZTAxMjA3YmZlYzNhMmRhYTM1NzhjOTY1NGEyMGRhMDQiLCJpYXQiOjE1NTQ2NTQxNjcsIm5iZiI6MTU1NDY1NDE2NywiZXhwIjoxNTg2Mjc2NTY3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.He-rveIH8w5VJpFASwHhd8h5qNJa6iJEYtjY4Z-ecCRcF4s54VW1XhY_nAXwXzTOPmM_wJXAAjS7xfDHrsByN1trd96f3v2GTOKBUF57tDk-dMmeKKspsER1DT0sD7BKqELbPu7CACq9EUf8E8t-xCHnWrg8KfgkVB7fihfw8rJeeQxLN-ON6gJn5jXQxaufVSqdP1aM8omuqOA51ZfNd_mIGjPsHrlB566DRbAfYIo1IB5rODkJndOAe2O09-Y1hrmi26TJyrIG1S-BNuO3irxqP35GGXmTX1_BwlDv_EuPfBZtbnP4Ew4k1OYgQu5kccOLl46dmvCCWdDXse54TlAm2sosFa-RxCxP9g-oZ1Unqm2VsOcSauOu-JvqnLKObQdz0mqTWFmbX9X-EhPr3RoH0eCSTMabwV-0jn9BtYMZZxsqj3nnS-C9Poebtx-oCCMq5ObG_lFK-ZbRxMrbUBHyvFYs-LAzjsFEUz-1eJPDoA24aFRN-GQE-k4FewMMHJG4OFNbKsPuD-R076lPNjRb-C13GxROW4srl7x71O6MtwDTDJzyZoD20ABNZRIa8azjAw1MESUj7DDmH3KOfuki8ROVHi3gPu-3MTk5sztIOyaIa5OeLY1zhWmc85UjZa-y-_bnSTB7xoelyODxJPAwCi8l-ZcnnMcdPUVuSYQ',
-    host: '192.168.0.138'
+    access_token: null,
+    host: '192.168.1.13'
   };
+
+  async componentDidMount() {
+    var access_token = await Clipboard.getString();
+    this.setState({access_token});
+  }
 
   authenticate() {
     axios.get(`http://${this.state.host}:8000/api/data`, {
@@ -60,6 +66,7 @@ class CheckAuth extends Component {
           <TextInput style={{ height: 40 }}
             placeholder="Type here Bearer Token"
             onChangeText={(access_token) => this.setState({ access_token })}
+            value={ this.state.access_token }
           />
           <Button onPress={() => navigate('CheckSocket')}
             title="Check Socket"
