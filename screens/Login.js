@@ -16,7 +16,8 @@ class Login extends Component {
     email: '8987273',
     password: 'timmy1420',
     host: '192.168.1.13',
-    access_token: null
+    access_token: null,
+    user_type: null
   };
 
   async componentDidMount() {
@@ -25,6 +26,8 @@ class Login extends Component {
   }
 
   login = () => {
+    const that = this;
+
     axios.post(`http://${this.state.host}:8000/oauth/token`, {
         grant_type: 'password',
         client_id: '3',
@@ -35,18 +38,45 @@ class Login extends Component {
       .then(function (response) {
         const {
           access_token,
-          token_type
+          user_type
         } = response.data;
-        if (token_type == "Bearer") alert('You are successfully logged in');
-        console.log('Access token: ', access_token);
-
         // Copy token to device clipboard
         Clipboard.setString(access_token);
+
+        // Update user_type
+        that.setState({ user_type });
+        
+        console.log('Access token: ', access_token);
+        alert('Access token copied to clipboard!');
       })
       .catch(function (error) {
         console.log(error);
         alert('Problem occured while loggin in.')
       });
+  }
+
+  tripModule() {
+    this.login(); // First, login to get user type
+    const { navigate } = this.props.navigation;
+
+    console.log(this.state.user_type);
+
+    // Navigate to user screen determined by the user_type
+    setInterval(() => {
+      switch (this.state.user_type) {
+        case 'passenger':
+          navigate('Passenger');
+          break;
+
+        case 'rider':
+          navigate('Rider');
+          break;
+      
+        default:
+          // alert('User type not defined');
+          break;
+      }
+    }, 1000);
   }
 
   render() {
@@ -76,6 +106,10 @@ class Login extends Component {
             placeholder="Password"
             onChangeText={ (password) => this.setState({password}) }
             value={ this.state.password }
+          />
+          <Button onPress={() => this.tripModule() }
+            title='Simulate trip'
+            color="#74BF9B" 
           />
         </View> 
       </View>

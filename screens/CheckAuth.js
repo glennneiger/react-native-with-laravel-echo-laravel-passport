@@ -27,8 +27,8 @@ class CheckAuth extends Component {
     axios.get(`http://${this.state.host}:8000/api/data`, {
       headers: {
         'Authorization': 'Bearer ' + this.state.access_token
-      }
-    })
+        }
+      })
       .then(function (response) {
         console.log(response.data);
         if (response.data.status == 'OK') alert('You are logged in');

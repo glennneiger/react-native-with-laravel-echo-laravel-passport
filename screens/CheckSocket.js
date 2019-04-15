@@ -23,8 +23,9 @@ class CheckAuth extends Component {
             // channel_id: '10',
             csrf: null,
             host: '192.168.1.13',
+            user_id: null,
             // channel: 'allRiders.10'
-            channel: 'toPassenger.10'
+            channel: 'passenger'
         };
 
         this.echo = null;
@@ -33,6 +34,31 @@ class CheckAuth extends Component {
     async componentDidMount() {
         var access_token = await Clipboard.getString();
         this.setState({access_token});
+
+        this.fetchUserId();
+    }
+
+    fetchUserId() {
+        // Refer this to CheckSocket class with `that` variable xD
+        const that = this;
+
+        axios.get(`http://${this.state.host}:8000/api/user`, {
+          headers: {
+            'Authorization': 'Bearer ' + this.state.access_token
+            }
+          })
+          .then(function (response) {
+            console.log(response.data);
+            const { id } = response.data;
+            that.setState({ user_id: id.toString() });
+          })
+          .catch(function (error) {
+            console.log(JSON.stringify(error));
+            alert('Authentication error');
+          });
+
+        // Update channel with passenger.id
+        this.setState({ channel: this.state.channel + '.' + this.state.user_id });
     }
 
     join() {
@@ -77,11 +103,11 @@ class CheckAuth extends Component {
     }
 
     messageRider() {
-        var headers = {
-            'Authorization': 'Bearer ' + this.state.access_token
-        };
         axios.post(`http://${this.state.host}:8000/api/trip_requests`, {
-            passenger_id: 26
+            lat_long_pickup: '1.23223, -15.23423',
+            lat_long_destination: '2.23223, -13.23423',
+            pickup_description: 'Ik heb wit aan.',
+            price_range: '20-35',
         },
         {
           headers: {
@@ -124,7 +150,7 @@ class CheckAuth extends Component {
                     color="#263238"
                 />
                 <Button onPress={ () => this.messageRider() }
-                    title="Send websocket event"
+                    title="Send Ajax"
                     color="#263238"
                 />
                 <Button onPress={ () => this.leave() }

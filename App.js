@@ -5,6 +5,8 @@ import { createStackNavigator, createAppContainer } from "react-navigation";
 import LoginScreen from './screens/Login';
 import TestPusher from './screens/CheckAuth';
 import CheckSocket from './screens/CheckSocket';
+import Passenger from './screens/Passenger';
+import Rider from './screens/Rider';
 
 class AppScreen extends Component {
   render() {
@@ -42,9 +44,11 @@ const RootStack = createStackNavigator(
     App: AppScreen,
     Test: TestPusher,
     CheckSocket: CheckSocket,
+    Passenger: Passenger,
+    Rider: Rider,
   },
   {
-    initialRouteName: 'App',
+    initialRouteName: 'Login',
   }
 );
 
