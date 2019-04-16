@@ -62,13 +62,15 @@ class Login extends Component {
     console.log(this.state.user_type);
 
     // Navigate to user screen determined by the user_type
-    setInterval(() => {
+    var interval = setInterval(() => {
       switch (this.state.user_type) {
         case 'passenger':
+          clearInterval(interval);
           navigate('Passenger');
           break;
 
         case 'rider':
+          clearInterval(interval);
           navigate('Rider');
           break;
       
@@ -77,6 +79,7 @@ class Login extends Component {
           break;
       }
     }, 1000);
+    
   }
 
   render() {
