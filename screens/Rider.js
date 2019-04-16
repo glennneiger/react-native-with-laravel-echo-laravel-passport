@@ -48,6 +48,10 @@ class Rider extends Component {
         this.fetchUserId();
     }
 
+    componentWillUnmount() {
+        this.leave();
+    }
+
     fetchUserId() {
         // Refer this to CheckSocket class with `that` variable xD
         const that = this;
@@ -129,6 +133,8 @@ class Rider extends Component {
 
     leave(channel = this.state.channel) {
         this.echo.leave(channel);
+        this.echo = null;
+        this.setState({ online: false }); // Toggle online state
         alert('I left');
     }
 
@@ -150,9 +156,7 @@ class Rider extends Component {
 
     locationUpdate() {
         const data = 'My location [bsdkjhfbk,sdfdsdgf]';
-        console.log('Location: ', this);
-        
-        // this.whisper(this.state.passengerChannel, 'geo_update', data);
+        this.whisper(this.state.passengerChannel, 'geo_update', data);
     }
 
     disableLocationUpdate() {
@@ -191,15 +195,15 @@ class Rider extends Component {
         this.join(this.state.passengerChannel);
 
         // Start interval, Send location update every 5 seconds
-        var interval = setInterval(this.locationUpdate, 5000);
-        this.setState({ interval });
+        // var interval = setInterval(this.locationUpdate, 5000);
+        // this.setState({ interval });
 
         // Clear interval
         // this.clearInterval(this.state.interval);
     }
 
     _5_1_1delayed() {
-        axios.post(`http://${this.state.host}:8000/api/trip_/delayed`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/delayed`, {
             trip_id: this.state.trip_id
         },
         {
@@ -217,7 +221,7 @@ class Rider extends Component {
     }
 
     _5_1_1cancelled() {
-        axios.post(`http://${this.state.host}:8000/api/trip_/cancel`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/cancel`, {
             trip_id: this.state.trip_id
         },
         {
@@ -233,7 +237,7 @@ class Rider extends Component {
             alert('Problem occured.');
         });
 
-        this.disableLocationUpdate(); // Clear interval
+        // this.disableLocationUpdate(); // Clear interval
         this.leave(this.state.passengerChannel); // Leave passenger channel
         this.setState({ trip_id: null }); // Clear trip id
         this.setState({ trip_request_id: null }); // Clear trip id
@@ -241,7 +245,7 @@ class Rider extends Component {
     }
 
     _6A_arrived() {
-        axios.post(`http://${this.state.host}:8000/api/trip_/pickupArrived`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/pickupArrived`, {
             trip_id: this.state.trip_id
         },
         {
@@ -259,7 +263,7 @@ class Rider extends Component {
     }
 
     _7_start() {
-        axios.post(`http://${this.state.host}:8000/api/trip_/start`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/start`, {
             trip_id: this.state.trip_id
         },
         {
@@ -279,7 +283,7 @@ class Rider extends Component {
     _8arrived() {
         this.disableLocationUpdate(); // Clear interval
 
-        axios.post(`http://${this.state.host}:8000/api/trip_/destinationArrived`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/destinationArrived`, {
             trip_id: this.state.trip_id
         },
         {
@@ -297,7 +301,7 @@ class Rider extends Component {
     }
 
     _9_1rate() {
-        axios.post(`http://${this.state.host}:8000/api/trip_/rate`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/rate`, {
             trip_id: this.state.trip_id,
             rating: 4
         },
@@ -314,8 +318,12 @@ class Rider extends Component {
             alert('Problem occured.');
         });
 
-        this.setState({ trip_id: null }); // Clear trip id
-        this.setState({ trip_request_id: null }); // Clear trip id
+        // this.setState({ trip_id: null }); // Clear trip id
+        // this.setState({ trip_request_id: null }); // Clear trip id
+    }
+
+    tripDone() {
+        this.leave(this.state.passengerChannel); // Leave passenger channel
     }
 
     render() {
@@ -354,24 +362,28 @@ class Rider extends Component {
                         color="#DEA569"
                     />
                     <Button onPress={ () => this._6A_arrived() }
-                        title="6a. Arrived"
+                        title="6a. Arrived at pickup"
                         color="#CDCD4E"
                     />
                     <Button onPress={ () => this._7_start() }
                         title="7. Start trip"
                         color="#65CD4E"
                     />
-                    {/* <Button onPress={ () => this._7_2_1start() }
+                    <Button onPress={ () => this.locationUpdate() }
                         title="7.2.1 Send location update"
                         color="#4ECDBB"
-                    /> */}
+                    />
                     <Button onPress={ () => this._8arrived() }
-                        title="8. Rider arrived"
+                        title="8. Arrived at destination"
                         color="#D38DDC"
                     />
                     <Button onPress={ () => this._9_1rate() }
                         title="9.1 Rate passenger"
                         color="#8EC781"
+                    />
+                    <Button onPress={ () => this.tripDone() }
+                        title="Trip done"
+                        color="#007CED"
                     />
                 </View>
             </ScrollView>

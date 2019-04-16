@@ -34,6 +34,10 @@ class Passenger extends Component {
         this.echo = null;
     }
 
+    componentWillUnmount() {
+        this.leave();
+    }
+
     async componentDidMount() {
         var access_token = await Clipboard.getString();
         this.setState({access_token});
@@ -42,7 +46,7 @@ class Passenger extends Component {
     }
 
     fetchUserId() {
-        // Refer this to CheckSocket class with `that` variable xD
+        // Refer this class with `that` variable xD
         const that = this;
 
         axios.get(`http://${this.state.host}:8000/api/initial`, {
@@ -67,6 +71,9 @@ class Passenger extends Component {
     }
 
     join() {
+        // Refer this class with `that` variable xD
+        const that = this;
+
         this.echo = new Echo({
             broadcaster: 'socket.io',
             host: `ws://${this.state.host}:6001`,
@@ -91,8 +98,11 @@ class Passenger extends Component {
             })
             .listen('MessagePassenger', event => {
                 console.log('Passenger: MessagePassenger: ', event);
-                const { status } = event;
-                if(status == 'on_the_way') alert('Rider onderweg');
+                const { status, trip_id, name, message, image } = event;
+                if(status == 'on_the_way') {
+                    alert('Rider onderweg');
+                    that.setState({ trip_id });
+                }
             })
             .listenForWhisper('geo_update', (response) => {
                 console.log('Passenger: Rider location update: ', JSON.stringify(response));
@@ -135,7 +145,7 @@ class Passenger extends Component {
     }
 
     _5_1_2delayed() {
-        axios.post(`http://${this.state.host}:8000/api/trip_/delayed`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/delayed`, {
             trip_id: this.state.trip_id
         },
         {
@@ -153,7 +163,7 @@ class Passenger extends Component {
     }
 
     _5_1_2canelled() {
-        axios.post(`http://${this.state.host}:8000/api/trip_/cancel`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/cancel`, {
             trip_id: this.state.trip_id
         },
         {
@@ -173,7 +183,7 @@ class Passenger extends Component {
     }
 
     _9_1rate() {
-        axios.post(`http://${this.state.host}:8000/api/trip_/rate`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/rate`, {
             trip_id: this.state.trip_id,
             rating: 3,
             tip: 19
@@ -195,7 +205,8 @@ class Passenger extends Component {
     }
 
     leave() {
-        this.echo.leave(this.state.channel);
+        if(this.echo != null) this.echo.leave(this.state.channel);
+        this.echo = null;
         alert('I left');
     }
 
@@ -218,17 +229,21 @@ class Passenger extends Component {
                     title="1. Trip Request"
                     color="#263238"
                 />
-                <Button onPress={ () => this._5_1_2delayed() }
+                <Button onPress={ () => this._5_1_2canelled() }
                     title="5.1.2 Cancel trip request"
                     color="#E76E6E"
                 />
-                <Button onPress={ () => this._5_1_2canelled() }
+                <Button onPress={ () => this._5_1_2delayed() }
                     title="5.1.2 Passenger delayed"
                     color="#DEA569"
                 />
                 <Button onPress={ () => this._9_1rate() }
                     title="9.1 Rate rider"
                     color="#8EC781"
+                />
+                <Button onPress={ () => this.leave() }
+                    title="Trip done"
+                    color="#007CED"
                 />
             </View>
         );
