@@ -24,7 +24,7 @@ class Passenger extends Component {
             access_token: null,
             // channel_id: '10',
             csrf: null,
-            host: '192.168.1.13',
+            host: 'ride.sr',
             user_id: null,
             channel: null,
             readyText: 'Not ready',
@@ -123,8 +123,8 @@ class Passenger extends Component {
 
     _1tripRequest() {
         axios.post(`http://${this.state.host}/api/trip_requests/register`, {
-            lat_long_pickup: '1.23223, -15.23423',
-            lat_long_destination: '2.23223, -13.23423',
+            lat_long_pickup: '5.8258842,-55.1955983',
+            lat_long_destination: '5.8242192,-55.188131',
             pickup_description: 'Ik heb wit aan.',
             price_range: '20-35',
         },
