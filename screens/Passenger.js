@@ -24,7 +24,7 @@ class Passenger extends Component {
             access_token: null,
             // channel_id: '10',
             csrf: null,
-            host: '192.168.1.13',
+            host: 'ride.sr',
             user_id: null,
             channel: null,
             readyText: 'Not ready',
@@ -49,12 +49,14 @@ class Passenger extends Component {
         // Refer this class with `that` variable xD
         const that = this;
 
-        axios.get(`http://${this.state.host}:8000/api/initial`, {
+        axios.get(`http://${this.state.host}/api/initial`, {
           headers: {
             'Authorization': 'Bearer ' + this.state.access_token
             }
           })
           .then(function (response) {
+              console.log(response.data);
+              
             const { id } = response.data;
 
             // Update channel with passenger.id
@@ -120,7 +122,7 @@ class Passenger extends Component {
     // }
 
     _1tripRequest() {
-        axios.post(`http://${this.state.host}:8000/api/trip_requests/register`, {
+        axios.post(`http://${this.state.host}/api/trip_requests/register`, {
             lat_long_pickup: '1.23223, -15.23423',
             lat_long_destination: '2.23223, -13.23423',
             pickup_description: 'Ik heb wit aan.',
@@ -145,7 +147,7 @@ class Passenger extends Component {
     }
 
     _5_1_2delayed() {
-        axios.post(`http://${this.state.host}:8000/api/trip/delayed`, {
+        axios.post(`http://${this.state.host}/api/trip/delayed`, {
             trip_id: this.state.trip_id
         },
         {
@@ -163,7 +165,7 @@ class Passenger extends Component {
     }
 
     _5_1_2canelled() {
-        axios.post(`http://${this.state.host}:8000/api/trip/cancel`, {
+        axios.post(`http://${this.state.host}/api/trip/cancel`, {
             trip_id: this.state.trip_id
         },
         {
@@ -183,7 +185,7 @@ class Passenger extends Component {
     }
 
     _9_1rate() {
-        axios.post(`http://${this.state.host}:8000/api/trip/rate`, {
+        axios.post(`http://${this.state.host}/api/trip/rate`, {
             trip_id: this.state.trip_id,
             rating: 3,
             tip: 19

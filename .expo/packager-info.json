@@ -1,10 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
-  "packagerPort": null,
-  "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 20987,
+  "expoServerNgrokUrl": "https://dr-m8s.timmy1420.react-native-with-laravel-echo-laravel-passport.exp.direct",
+  "packagerNgrokUrl": "https://packager.dr-m8s.timmy1420.react-native-with-laravel-echo-laravel-passport.exp.direct",
+  "ngrokPid": 22117,
   "webpackServerPort": null
 }
