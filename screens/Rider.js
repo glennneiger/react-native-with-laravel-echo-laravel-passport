@@ -25,7 +25,7 @@ class Rider extends Component {
 
         this.state = {
             access_token: null,
-            host: 'ride.sr',
+            host: '192.168.1.13',
             user_id: null,
             channel: 'allRiders',
             passengerChannel: null, // Specific channel from a passenger

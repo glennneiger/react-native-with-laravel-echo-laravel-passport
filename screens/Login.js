@@ -15,7 +15,7 @@ class Login extends Component {
   state = {
     email: '8987273',
     password: 'timmy1420',
-    host: 'ride.sr',
+    host: '192.168.1.13',
     access_token: null,
     user_type: null
   };
@@ -30,10 +30,10 @@ class Login extends Component {
 
     axios.post(`http://${this.state.host}/oauth/token`, {
         grant_type: 'password',
-        client_id: '1',
-        // client_id: '3',
-        // client_secret: 'dC7EkHJSMNVjeOoZANzyGvpAEnwAGXaDYHwTbZXh',
-        client_secret: 'mCs46si2yA6lrPzEZPMAj1Lvyss9XHBF6todAJtU',
+        // client_id: '1',
+        client_id: '3',
+        client_secret: 'dC7EkHJSMNVjeOoZANzyGvpAEnwAGXaDYHwTbZXh',
+        // client_secret: 'mCs46si2yA6lrPzEZPMAj1Lvyss9XHBF6todAJtU',
         username: this.state.email,
         password: this.state.password,
       })

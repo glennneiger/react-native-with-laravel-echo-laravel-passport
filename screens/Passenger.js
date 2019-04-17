@@ -24,7 +24,7 @@ class Passenger extends Component {
             access_token: null,
             // channel_id: '10',
             csrf: null,
-            host: 'ride.sr',
+            host: '192.168.1.13',
             user_id: null,
             channel: null,
             readyText: 'Not ready',
