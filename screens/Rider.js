@@ -102,25 +102,24 @@ class Rider extends Component {
             .leaving((user) => {
                 console.log('Rider: User leaving: ', user);
             })
+            .listen('MessagePassenger', event => {
+                console.log('Rider: MessagePassengers: ', event);
+            })
             .listen('MessageRiders', event => {
                 console.log('Rider: MessageRiders: ', event);
                 const { status, user_type, passenger_user_id, trip_request_id } = event;
                 if(status == 'pickup' &&  user_type == 'passenger') {
                     alert('Trip aanvraag');
-                    // that.leave(); // Leave riders channel
                     that.setState({ passengerChannel: 'passenger.' + passenger_user_id });
                     that.setState({ trip_request_id });
-                    // that.join(that.state.passengerChannel); // Then join the passenger channel
                 }
-            })
-            .listen('MessagePassengers', event => {
-                console.log('Rider: MessagePassengers: ', event);
             })
             .listenForWhisper('geo_update', (response) => {
                 console.log('Rider: Passenger location update: ', JSON.stringify(response));
             });
     }
 
+    
     whisper(channel = null, event = null, data = null) {
         if(this.echo != null && channel != null && data != null && event != null ) {
             this.echo.join(channel)
@@ -132,7 +131,7 @@ class Rider extends Component {
     }
 
     leave(channel = this.state.channel) {
-        this.echo.leave(channel);
+        if(this.echo != null) this.echo.leave( channel );
         this.echo = null;
         this.setState({ online: false }); // Toggle online state
         alert('I left');
@@ -155,7 +154,6 @@ class Rider extends Component {
     }
 
     locationUpdate() {
-        // const data = 'My location [bsdkjhfbk,sdfdsdgf]';
         const data = {
             location: {
                 latitude: 5.7894572,
@@ -323,13 +321,14 @@ class Rider extends Component {
             console.log(error);
             alert('Problem occured.');
         });
-
-        // this.setState({ trip_id: null }); // Clear trip id
-        // this.setState({ trip_request_id: null }); // Clear trip id
     }
 
     tripDone() {
         this.leave(this.state.passengerChannel); // Leave passenger channel
+
+        this.setState({ trip_id: null }); // Clear trip id
+        this.setState({ trip_request_id: null }); // Clear trip id
+        this.setState({ passengerChannel: null }); // Clear passengerChannel state
     }
 
     render() {

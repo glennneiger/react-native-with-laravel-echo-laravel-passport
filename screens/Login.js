@@ -38,18 +38,12 @@ class Login extends Component {
         password: this.state.password,
       })
       .then(function (response) {
-        const {
-          access_token,
-          user_type
-        } = response.data;
-        // Copy token to device clipboard
-        Clipboard.setString(access_token);
-
-        // Update user_type
-        that.setState({ user_type });
+        const { access_token, user_type } = response.data;
+        
+        Clipboard.setString(access_token); // Copy token to device clipboard
+        that.setState({ user_type }); // Update user_type
         
         console.log('Access token: ', access_token);
-        alert('Access token copied to clipboard!');
       })
       .catch(function (error) {
         console.log(error);
