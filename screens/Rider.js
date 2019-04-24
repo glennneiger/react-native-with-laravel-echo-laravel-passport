@@ -216,6 +216,29 @@ class Rider extends Component {
         // this.clearInterval(this.state.interval);
     }
 
+    _3C_decline() {
+        if(this.state.trip_request_id == null) return false;
+
+        // Refer this class with `that` variable :)
+        const that = this;
+
+        axios.post(`http://${this.state.host}/api/trip/decline`, {
+            trip_request_id: that.state.trip_request_id
+        },
+        {
+          headers: {
+            Authorization: 'Bearer ' + this.state.access_token
+          }
+        })
+        .then((response) => {
+            console.log('Rider response.data: ', response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+            alert('Problem occured while loggin in.');
+        });
+    }
+
     _5_1_1delayed() {
         axios.post(`http://${this.state.host}/api/trip/delayed`, {
             trip_id: this.state.trip_id
@@ -367,6 +390,10 @@ class Rider extends Component {
                     <Button onPress={ () => this._3A_accept() }
                         title="3a. Accept trip"
                         color="#5560BE"
+                    />
+                    <Button onPress={ () => this._3C_decline() }
+                        title="3c. Accept trip"
+                        color="#8A93DD"
                     />
                     <Button onPress={ () => this._5_1_1delayed() }
                         title="5.1.1 Rider delayed"
