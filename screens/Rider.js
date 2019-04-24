@@ -241,7 +241,8 @@ class Rider extends Component {
 
     _5_1_1delayed() {
         axios.post(`http://${this.state.host}/api/trip/delayed`, {
-            trip_id: this.state.trip_id
+            trip_id: this.state.trip_id,
+            reason: 'Some reason for delay'
         },
         {
           headers: {
