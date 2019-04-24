@@ -49,7 +49,7 @@ class Rider extends Component {
     }
 
     componentWillUnmount() {
-        this.leave();
+        this.leaveAll(); // Leave all channels
     }
 
     fetchUserId() {
@@ -131,7 +131,17 @@ class Rider extends Component {
     }
 
     leave(channel = this.state.channel) {
-        if(this.echo != null) this.echo.leave( channel );
+        if(this.echo != null) {
+            this.echo.leave( channel );
+            this.echo = null;
+            this.setState({ online: false }); // Toggle online state
+            alert('I left');
+        }
+    }
+
+    leaveAll() {
+        if( this.state.passengerChannel != null ) this.leave( this.state.passengerChannel);
+        if( this.state.channel != null ) this.leave( this.state.channel);
         this.echo = null;
         this.setState({ online: false }); // Toggle online state
         alert('I left');

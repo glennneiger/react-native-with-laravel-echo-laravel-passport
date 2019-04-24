@@ -22,7 +22,6 @@ class Passenger extends Component {
 
         this.state = {
             access_token: null,
-            // channel_id: '10',
             csrf: null,
             host: 'ride.sr',
             user_id: null,
@@ -142,7 +141,8 @@ class Passenger extends Component {
         });
 
         // After AJAX request, active websocket
-        this.join();
+        // Don't open an extra socket connection by re-calling this.join() if isn't null
+        if( this.echo == null ) this.join();
         ToastAndroid.show('Waiting for rider to accept...', ToastAndroid.SHORT);
     }
 
@@ -207,9 +207,11 @@ class Passenger extends Component {
     }
 
     leave() {
-        if(this.echo != null) this.echo.leave(this.state.channel);
-        this.echo = null;
-        alert('I left');
+        if(this.echo != null) {
+            this.echo.leave(this.state.channel);
+            this.echo = null;
+            alert('I left');
+        }
     }
 
     render() {
