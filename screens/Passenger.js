@@ -54,9 +54,10 @@ class Passenger extends Component {
             }
           })
           .then(function (response) {
-              console.log(response.data);
+            console.log(response.data);
               
             const { id } = response.data;
+            // const { id } = data;
 
             // Update channel with passenger.id
             that.setState({ channel: 'passenger.' + id.toString() });
@@ -99,14 +100,43 @@ class Passenger extends Component {
             })
             .listen('MessagePassenger', event => {
                 console.log('Passenger: MessagePassenger: ', event);
-                const { status, trip_id, name, message, image } = event;
-                if(status == 'on_the_way') {
-                    alert('Rider onderweg');
-                    that.setState({ trip_id });
+                const { status, trip_id, name, message, image, user_type } = event;
+
+                switch(status) {
+                    case 'on_the_way':
+                        alert('Rider onderweg');
+                        that.setState({ trip_id });
+                        break;
+                    case 'delayed': 
+                        if (user_type == 'rider')
+                            ToastAndroid.show('Rider vertraagd', ToastAndroid.SHORT);
+                        break;
+                    case 'canceled': 
+                        if (user_type == 'rider')
+                            ToastAndroid.show('Rider heeft geannulleerd', ToastAndroid.SHORT);
+                        this.leaveAll();
+                        break;
+                    case 'rate': 
+                        if (user_type == 'rider')
+                            ToastAndroid.show('Rider rated', ToastAndroid.SHORT);
+                        break;
+                    case 'arrived_at_pickup': 
+                        if (user_type == 'rider')
+                            ToastAndroid.show('Rider aangekomen op pickup location', ToastAndroid.SHORT);
+                        break;
+                    case 'trip_start': 
+                        if (user_type == 'rider')
+                            ToastAndroid.show('Rider heeft de trip gestart', ToastAndroid.SHORT);
+                        break;
+                    case 'arrived_at_destination': 
+                        if (user_type == 'rider')
+                            ToastAndroid.show('Rider aangekomen op bestemming location', ToastAndroid.SHORT);
+                        break;
                 }
             })
             .listenForWhisper('geo_update', (response) => {
                 console.log('Passenger: Rider location update: ', JSON.stringify(response));
+                ToastAndroid.show('Rider location update', ToastAndroid.SHORT);
             });
     }
 
@@ -148,7 +178,8 @@ class Passenger extends Component {
 
     _5_1_2delayed() {
         axios.post(`http://${this.state.host}/api/trip/delayed`, {
-            trip_id: this.state.trip_id
+            trip_id: this.state.trip_id,
+            reason: 'Some reason for delay from passenger'
         },
         {
           headers: {

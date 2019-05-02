@@ -13,8 +13,10 @@ import axios from 'axios';
 class Login extends Component {
 
   state = {
-    email: '8933396',
-    password: 'password',
+    email: '8987273',
+    // email: '8933396',
+    password: 'timmy1420',
+    // password: 'password',
     host: 'ride.sr',
     access_token: null,
     user_type: null

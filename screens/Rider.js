@@ -104,14 +104,37 @@ class Rider extends Component {
             })
             .listen('MessagePassenger', event => {
                 console.log('Rider: MessagePassengers: ', event);
+                const { status, user_type } = event;
+
+                switch(status) {
+                    case 'delayed': 
+                        if (user_type == 'passenger')
+                            ToastAndroid.show('Passengier vertraagd', ToastAndroid.SHORT);
+                        break;
+                    case 'canceled': 
+                        if (user_type == 'passenger')
+                            ToastAndroid.show('Passengier heeft geannulleerd', ToastAndroid.SHORT);
+                        this.leaveAll();
+                        break;
+                    case 'rate': 
+                        if (user_type == 'passenger')
+                            ToastAndroid.show('Passengier rated', ToastAndroid.SHORT);
+                        break;
+                }
+
             })
             .listen('MessageRiders', event => {
                 console.log('Rider: MessageRiders: ', event);
                 const { status, user_type, passenger_user_id, trip_request_id } = event;
-                if(status == 'pickup' &&  user_type == 'passenger') {
+
+                if (status == 'pickup' && user_type == 'passenger') {
                     alert('Trip aanvraag');
                     that.setState({ passengerChannel: 'passenger.' + passenger_user_id });
                     that.setState({ trip_request_id });
+                } else if (status == 'rider_already_found' && user_type == 'passenger') {
+                    ToastAndroid.show('Passagier heeft al een rider gevonden', ToastAndroid.SHORT);
+                    that.setState({ passengerChannel: null });
+                    that.setState({ trip_request_id: null });
                 }
             })
             .listenForWhisper('geo_update', (response) => {
@@ -124,7 +147,7 @@ class Rider extends Component {
         if(this.echo != null && channel != null && data != null && event != null ) {
             this.echo.join(channel)
                 .whisper(event, data);
-            alert('Whisper sent!');
+            console.log('Whisper sent!');
         } else {
             alert('Please register websocket!');
         }
@@ -133,16 +156,24 @@ class Rider extends Component {
     leave(channel = this.state.channel) {
         if(this.echo != null) {
             this.echo.leave( channel );
-            this.echo = null;
+
+            // Probable instance fix
+            this.echo.leaveChannel( channel );
+
+            // this.echo = null;
             this.setState({ online: false }); // Toggle online state
+
             alert('I left');
         }
     }
 
     leaveAll() {
-        if( this.state.passengerChannel != null ) this.leave( this.state.passengerChannel);
-        if( this.state.channel != null ) this.leave( this.state.channel);
-        this.echo = null;
+        if( this.state.passengerChannel != null ) this.leave( this.state.passengerChannel );
+        if( this.state.channel != null ) {
+            this.leave( this.state.channel);
+            this.echo.disconnect(); // Disconnect from Echo server
+        }
+
         this.setState({ online: false }); // Toggle online state
         alert('I left');
     }
@@ -150,7 +181,8 @@ class Rider extends Component {
     onlineToggle() {
         switch(this.state.online) {
             case true:
-                this.leave();
+                // this.leave();
+                this.leaveAll();
                 break;
 
             case false:
@@ -279,7 +311,7 @@ class Rider extends Component {
         this.leave(this.state.passengerChannel); // Leave passenger channel
         this.setState({ trip_id: null }); // Clear trip id
         this.setState({ trip_request_id: null }); // Clear trip id
-        if(this.state.online == true) this.join(); // Re-Join the riders channel
+        // if(this.state.online == true) this.join(); // Re-Join the riders channel
     }
 
     _6A_arrived() {
@@ -358,11 +390,20 @@ class Rider extends Component {
     }
 
     tripDone() {
-        this.leave(this.state.passengerChannel); // Leave passenger channel
+        // this.leave(this.state.passengerChannel); // Leave passenger channel
+        this.leaveAll(); // Leave all channels
 
         this.setState({ trip_id: null }); // Clear trip id
         this.setState({ trip_request_id: null }); // Clear trip id
         this.setState({ passengerChannel: null }); // Clear passengerChannel state
+    }
+
+    getSocketId() {
+        console.log('socketId', this.echo.socketId());
+    }
+
+    doDisconnect() {
+        if( this.echo != null ) this.echo.disconnect();
     }
 
     render() {
@@ -393,7 +434,7 @@ class Rider extends Component {
                         color="#5560BE"
                     />
                     <Button onPress={ () => this._3C_decline() }
-                        title="3c. Accept trip"
+                        title="3c. Decline trip"
                         color="#8A93DD"
                     />
                     <Button onPress={ () => this._5_1_1delayed() }
@@ -427,6 +468,14 @@ class Rider extends Component {
                     <Button onPress={ () => this.tripDone() }
                         title="Trip done"
                         color="#007CED"
+                    />
+                    <Button onPress={ () => this.getSocketId() }
+                        title="Socket Id"
+                        color="#007CED"
+                    />
+                    <Button onPress={ () => this.doDisconnect() }
+                        title="Disconnect"
+                        color="#117CED"
                     />
                 </View>
             </ScrollView>
