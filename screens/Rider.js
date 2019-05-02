@@ -35,7 +35,8 @@ class Rider extends Component {
             trip_request_id: null,
             trip_started: false,
             interval: null, // Usefull for geo 5 second update,
-            car_id: 1
+            car_id: 1,
+            started: false
         };
 
         this.echo = null;
@@ -76,11 +77,10 @@ class Rider extends Component {
           });
     }
 
-    join(channel = this.state.channel) {
-        // Refer this class with `that` variable :)
-        const that = this;
+    startWebsocket() {
+        this.leaveAll();
 
-        this.echo = new Echo({
+        if(this.echo == null) this.echo = new Echo({
             broadcaster: 'socket.io',
             host: `ws://${this.state.host}:6001`,
             client: Socketio,
@@ -91,6 +91,13 @@ class Rider extends Component {
                 }
             }
         });
+    }
+
+    join(channel = this.state.channel) {
+        // Refer this class with `that` variable :)
+        const that = this;
+
+        this.startWebsocket();
 
         this.echo.join(channel)
             .here((users) => {
@@ -141,7 +148,6 @@ class Rider extends Component {
                 console.log('Rider: Passenger location update: ', JSON.stringify(response));
             });
     }
-
     
     whisper(channel = null, event = null, data = null) {
         if(this.echo != null && channel != null && data != null && event != null ) {
@@ -168,20 +174,21 @@ class Rider extends Component {
     }
 
     leaveAll() {
-        if( this.state.passengerChannel != null ) this.leave( this.state.passengerChannel );
-        if( this.state.channel != null ) {
-            this.leave( this.state.channel);
-            this.echo.disconnect(); // Disconnect from Echo server
+        if(this.echo != null) {
+            if( this.state.passengerChannel != null ) this.leave( this.state.passengerChannel );
+            if( this.state.channel != null ) {
+                this.leave( this.state.channel);
+                this.echo.disconnect(); // Disconnect from Echo server
+                this.echo = null;
+            }
         }
 
         this.setState({ online: false }); // Toggle online state
-        alert('I left');
     }
 
     onlineToggle() {
         switch(this.state.online) {
             case true:
-                // this.leave();
                 this.leaveAll();
                 break;
 
@@ -239,13 +246,6 @@ class Rider extends Component {
             console.log(error);
             alert('Problem occured while loggin in.');
         });
-
-        // Start interval, Send location update every 5 seconds
-        // var interval = setInterval(this.locationUpdate, 5000);
-        // this.setState({ interval });
-
-        // Clear interval
-        // this.clearInterval(this.state.interval);
     }
 
     _3C_decline() {
@@ -283,6 +283,8 @@ class Rider extends Component {
         })
         .then((response) => {
             console.log('Rider response.data: ', response.data);
+
+            this.onlineToggle();
         })
         .catch((error) => {
             console.log(error);
@@ -305,6 +307,8 @@ class Rider extends Component {
             this.leave(this.state.passengerChannel); // Leave passenger channel
             this.setState({ trip_id: null }); // Clear trip id
             this.setState({ trip_request_id: null }); // Clear trip id
+
+            this.onlineToggle();
         })
         .catch((error) => {
             console.log(error);
@@ -394,6 +398,8 @@ class Rider extends Component {
         this.setState({ trip_id: null }); // Clear trip id
         this.setState({ trip_request_id: null }); // Clear trip id
         this.setState({ passengerChannel: null }); // Clear passengerChannel state
+
+        this.onlineToggle();
     }
 
     getSocketId() {
