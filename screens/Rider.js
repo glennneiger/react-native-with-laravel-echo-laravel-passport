@@ -229,16 +229,16 @@ class Rider extends Component {
             console.log('Rider response.data: ', response.data);
             const { trip_id } = response.data;
             that.setState({ trip_id });
+
+            this.leave(); // Leave rider channel
+
+            // After AJAX request, activate passenger channel
+            this.join(this.state.passengerChannel);
         })
         .catch((error) => {
             console.log(error);
             alert('Problem occured while loggin in.');
         });
-
-        this.leave(); // Leave rider channel
-
-        // After AJAX request, activate passenger channel
-        this.join(this.state.passengerChannel);
 
         // Start interval, Send location update every 5 seconds
         // var interval = setInterval(this.locationUpdate, 5000);
@@ -301,17 +301,15 @@ class Rider extends Component {
         })
         .then((response) => {
             console.log('Rider response.data: ', response.data);
+
+            this.leave(this.state.passengerChannel); // Leave passenger channel
+            this.setState({ trip_id: null }); // Clear trip id
+            this.setState({ trip_request_id: null }); // Clear trip id
         })
         .catch((error) => {
             console.log(error);
             alert('Problem occured.');
         });
-
-        // this.disableLocationUpdate(); // Clear interval
-        this.leave(this.state.passengerChannel); // Leave passenger channel
-        this.setState({ trip_id: null }); // Clear trip id
-        this.setState({ trip_request_id: null }); // Clear trip id
-        // if(this.state.online == true) this.join(); // Re-Join the riders channel
     }
 
     _6A_arrived() {
