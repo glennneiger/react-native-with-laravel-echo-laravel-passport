@@ -9,6 +9,7 @@ import {
   Clipboard
 } from 'react-native';
 import axios from 'axios';
+import { Permissions, Notifications } from 'expo';
 
 class Login extends Component {
 
@@ -17,27 +18,58 @@ class Login extends Component {
     // email: '8933396',
     password: 'timmy1420',
     // password: 'password',
-    host: 'ride.sr',
+    host: '192.168.1.13:8000',
     access_token: null,
-    user_type: null
+    user_type: null,
+    expo_token: null
   };
 
   async componentDidMount() {
     var access_token = await Clipboard.getString();
     this.setState({access_token});
+
+    this.registerForPushNotificationsAsync();
+  }
+
+  async registerForPushNotificationsAsync() {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+
+    // only ask if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+    if (existingStatus !== 'granted') {
+      // Android remote notification permissions are granted during the app
+      // install, so this will only ask on iOS
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== 'granted') {
+      console.log('Push notification permission DENIED!');
+      return;
+    }
+
+    // Get the token that uniquely identifies this device
+    let expo_token = await Notifications.getExpoPushTokenAsync();
+    console.log('Expo Token: ', expo_token);
+    this.setState({expo_token});
   }
 
   login = () => {
     const that = this;
 
-    axios.post(`http://${this.state.host}/oauth/token`, {
+    axios.post(`http://${this.state.host}/oauth/login`, {
         grant_type: 'password',
-        client_id: '1',
-        // client_id: '3',
-        // client_secret: 'dC7EkHJSMNVjeOoZANzyGvpAEnwAGXaDYHwTbZXh',
-        client_secret: 'mCs46si2yA6lrPzEZPMAj1Lvyss9XHBF6todAJtU',
+        client_id: '3', // Local
+        // client_id: '1',
+        client_secret: 'rty', // Local
+        // client_secret: 'mCs46si2yA6lrPzEZPMAj1Lvyss9XHBF6todAJtU', // Live
         username: this.state.email,
         password: this.state.password,
+        expo_token: this.state.expo_token,
       })
       .then(function (response) {
         const { access_token, user_type } = response.data;
@@ -110,6 +142,10 @@ class Login extends Component {
           />
           <Button onPress={() => this.tripModule() }
             title='Simulate trip'
+            color="#74BF9B" 
+          />
+          <Button onPress={() => this.props.navigation.navigate('PushNotification') }
+            title='Push Notification'
             color="#74BF9B" 
           />
         </View> 

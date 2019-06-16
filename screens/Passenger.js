@@ -10,6 +10,7 @@ import {
     Text,
     ToastAndroid
 } from 'react-native';
+import { Permissions, Notifications } from 'expo';
 
 import Echo from 'laravel-echo/dist/echo';
 import Socketio from 'socket.io-client/dist/socket.io';
@@ -23,11 +24,12 @@ class Passenger extends Component {
         this.state = {
             access_token: null,
             csrf: null,
-            host: 'ride.sr',
+            host: '192.168.1.13',
             user_id: null,
             channel: null,
             readyText: 'Not ready',
-            trip_id: null
+            trip_id: null,
+            notification: {}
         };
 
         this.echo = null;
@@ -42,13 +44,19 @@ class Passenger extends Component {
         this.setState({access_token});
 
         this.fetchUserId();
+        this._notificationSubscription = Notifications.addListener(this._handleNotification);
     }
+
+    _handleNotification = (notification) => {
+        this.setState({ notification });
+        console.log('Notification data: ', notification);
+    };
 
     fetchUserId() {
         // Refer this class with `that` variable xD
         const that = this;
 
-        axios.get(`http://${this.state.host}/api/initial`, {
+        axios.get(`http://${this.state.host}:8000/api/initial`, {
           headers: {
             'Authorization': 'Bearer ' + this.state.access_token
             }
@@ -151,11 +159,16 @@ class Passenger extends Component {
     // }
 
     _1tripRequest() {
-        axios.post(`http://${this.state.host}/api/trip_requests/register`, {
+        axios.post(`http://${this.state.host}:8000/api/trip_requests/register`, {
             lat_long_pickup: '5.8258842,-55.1955983',
             lat_long_destination: '5.8242192,-55.188131',
             pickup_description: 'Ik heb wit aan.',
             price_range: '20-35',
+            pickup_address: 'Ergens',
+            destination_address: 'Ergens',
+            distance: '105',
+            duration: '25',
+    	    // map_image: ''
         },
         {
           headers: {
@@ -166,7 +179,7 @@ class Passenger extends Component {
             console.log('Passenger response.data: ', response.data);
         })
         .catch((error) => {
-            console.log(error);
+            console.log(JSON.stringify(error));
             alert('Problem occured.');
         });
 
@@ -177,7 +190,7 @@ class Passenger extends Component {
     }
 
     _5_1_2delayed() {
-        axios.post(`http://${this.state.host}/api/trip/delayed`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/delayed`, {
             trip_id: this.state.trip_id,
             reason: 'Some reason for delay from passenger'
         },
@@ -196,7 +209,7 @@ class Passenger extends Component {
     }
 
     _5_1_2canelled() {
-        axios.post(`http://${this.state.host}/api/trip/cancel`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/cancel`, {
             trip_id: this.state.trip_id
         },
         {
@@ -216,7 +229,7 @@ class Passenger extends Component {
     }
 
     _9_1rate() {
-        axios.post(`http://${this.state.host}/api/trip/rate`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/rate`, {
             trip_id: this.state.trip_id,
             rating: 3,
             tip: 19

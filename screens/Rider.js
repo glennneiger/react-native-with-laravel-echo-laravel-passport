@@ -11,6 +11,7 @@ import {
     ToastAndroid,
     ScrollView
 } from 'react-native';
+import { Permissions, Notifications } from 'expo';
 
 import Echo from 'laravel-echo/dist/echo';
 import Socketio from 'socket.io-client/dist/socket.io';
@@ -25,9 +26,9 @@ class Rider extends Component {
 
         this.state = {
             access_token: null,
-            host: 'ride.sr',
+            host: '192.168.1.13',
             user_id: null,
-            channel: 'allRiders',
+            channel: null,
             passengerChannel: null, // Specific channel from a passenger
             readyText: 'Not ready',
             online: false,
@@ -36,7 +37,8 @@ class Rider extends Component {
             trip_started: false,
             interval: null, // Usefull for geo 5 second update,
             car_id: 1,
-            started: false
+            started: false,
+            notification: {}
         };
 
         this.echo = null;
@@ -47,7 +49,13 @@ class Rider extends Component {
         this.setState({access_token});
 
         this.fetchUserId();
-    }
+	    this._notificationSubscription = Notifications.addListener(this._handleNotification);
+	  }	
+
+	_handleNotification = (notification) => {
+	    this.setState({ notification });
+	    console.log('Notification data: ', notification);
+	 };
 
     componentWillUnmount() {
         this.leaveAll(); // Leave all channels
@@ -57,7 +65,7 @@ class Rider extends Component {
         // Refer this to CheckSocket class with `that` variable xD
         const that = this;
 
-        axios.get(`http://${this.state.host}/api/user`, {
+        axios.get(`http://${this.state.host}:8000/api/initial`, {
           headers: {
             'Authorization': 'Bearer ' + this.state.access_token
             }
@@ -65,8 +73,12 @@ class Rider extends Component {
           .then(function (response) {
             const { id } = response.data;
 
+            console.log('rider.' + id.toString());
+
             // Update channel with passenger.id
-            that.setState({ channel: that.state.channel });
+            // that.setState({ channel: that.state.channel });
+            that.setState({ channel: 'rider.' + id.toString() });
+            that.setState({ user_id: id });
 
             // Update readyText
             that.setState({ readyText: 'Ready to go...' });
@@ -130,8 +142,8 @@ class Rider extends Component {
                 }
 
             })
-            .listen('MessageRiders', event => {
-                console.log('Rider: MessageRiders: ', event);
+            .listen('MessageRider', event => {
+                console.log('Rider: MessageRider: ', event);
                 const { status, user_type, passenger_user_id, trip_request_id } = event;
 
                 if (status == 'pickup' && user_type == 'passenger') {
@@ -223,7 +235,7 @@ class Rider extends Component {
         // Refer this class with `that` variable :)
         const that = this;
 
-        axios.post(`http://${this.state.host}/api/trip/accept`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/accept`, {
             trip_request_id: that.state.trip_request_id,
             car_id: that.state.car_id,
         },
@@ -254,7 +266,7 @@ class Rider extends Component {
         // Refer this class with `that` variable :)
         const that = this;
 
-        axios.post(`http://${this.state.host}/api/trip/decline`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/decline`, {
             trip_request_id: that.state.trip_request_id
         },
         {
@@ -272,7 +284,7 @@ class Rider extends Component {
     }
 
     _5_1_1delayed() {
-        axios.post(`http://${this.state.host}/api/trip/delayed`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/delayed`, {
             trip_id: this.state.trip_id,
             reason: 'Some reason for delay'
         },
@@ -293,7 +305,7 @@ class Rider extends Component {
     }
 
     _5_1_1cancelled() {
-        axios.post(`http://${this.state.host}/api/trip/cancel`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/cancel`, {
             trip_id: this.state.trip_id
         },
         {
@@ -317,7 +329,7 @@ class Rider extends Component {
     }
 
     _6A_arrived() {
-        axios.post(`http://${this.state.host}/api/trip/pickupArrived`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/pickupArrived`, {
             trip_id: this.state.trip_id
         },
         {
@@ -335,7 +347,7 @@ class Rider extends Component {
     }
 
     _7_start() {
-        axios.post(`http://${this.state.host}/api/trip/start`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/start`, {
             trip_id: this.state.trip_id
         },
         {
@@ -355,7 +367,7 @@ class Rider extends Component {
     _8arrived() {
         this.disableLocationUpdate(); // Clear interval
 
-        axios.post(`http://${this.state.host}/api/trip/destinationArrived`, {
+        axios.post(`http://${this.state.host}:8000/api/trip/destinationArrived`, {
             trip_id: this.state.trip_id
         },
         {
@@ -373,9 +385,13 @@ class Rider extends Component {
     }
 
     _9_1rate() {
-        axios.post(`http://${this.state.host}/api/trip/rate`, {
-            trip_id: this.state.trip_id,
-            rating: 4
+        axios.post(`http://${this.state.host}:8000/api/trip/rate`, {
+            // trip_id: this.state.trip_id,
+            trip_id: 22,
+            rating: 4,
+            badges: [],
+            review_topic: "My review topic",
+            review_description: "My review description here"
         },
         {
           headers: {

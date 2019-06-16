@@ -7,6 +7,7 @@ import TestPusher from './screens/CheckAuth';
 import CheckSocket from './screens/CheckSocket';
 import Passenger from './screens/Passenger';
 import Rider from './screens/Rider';
+import PushNotification from './screens/PushNotification';
 
 class AppScreen extends Component {
   render() {
@@ -46,6 +47,7 @@ const RootStack = createStackNavigator(
     CheckSocket: CheckSocket,
     Passenger: Passenger,
     Rider: Rider,
+    PushNotification: PushNotification
   },
   {
     initialRouteName: 'Login',
