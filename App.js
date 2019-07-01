@@ -8,6 +8,7 @@ import CheckSocket from './screens/CheckSocket';
 import Passenger from './screens/Passenger';
 import Rider from './screens/Rider';
 import PushNotification from './screens/PushNotification';
+import FacebookLogin from './screens/FacebookLogin';
 
 class AppScreen extends Component {
   render() {
@@ -47,7 +48,8 @@ const RootStack = createStackNavigator(
     CheckSocket: CheckSocket,
     Passenger: Passenger,
     Rider: Rider,
-    PushNotification: PushNotification
+    PushNotification: PushNotification,
+    FacebookPage: FacebookLogin,
   },
   {
     initialRouteName: 'Login',

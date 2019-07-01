@@ -148,6 +148,10 @@ class Login extends Component {
             title='Push Notification'
             color="#74BF9B" 
           />
+          <Button onPress={() => this.props.navigation.navigate('FacebookPage') }
+            title='Facebook Login'
+            color="#AABFFF" 
+          />
         </View> 
       </View>
     );
