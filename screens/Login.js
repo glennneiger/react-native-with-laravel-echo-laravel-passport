@@ -18,7 +18,7 @@ class Login extends Component {
     // email: '8933396',
     password: 'timmy1420',
     // password: 'password',
-    host: '192.168.1.13:8000',
+    host: '10.1.1.72:8000',
     access_token: null,
     user_type: null,
     expo_token: null
@@ -151,6 +151,10 @@ class Login extends Component {
           <Button onPress={() => this.props.navigation.navigate('FacebookPage') }
             title='Facebook Login'
             color="#AABFFF" 
+          />
+          <Button onPress={() => this.props.navigation.navigate('GooglePage') }
+            title='Google Login'
+            color="#FFBFAA" 
           />
         </View> 
       </View>

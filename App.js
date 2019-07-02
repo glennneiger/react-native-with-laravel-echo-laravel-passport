@@ -9,6 +9,7 @@ import Passenger from './screens/Passenger';
 import Rider from './screens/Rider';
 import PushNotification from './screens/PushNotification';
 import FacebookLogin from './screens/FacebookLogin';
+import GoogleLogin from './screens/GoogleLogin';
 
 class AppScreen extends Component {
   render() {
@@ -50,6 +51,7 @@ const RootStack = createStackNavigator(
     Rider: Rider,
     PushNotification: PushNotification,
     FacebookPage: FacebookLogin,
+    GooglePage: GoogleLogin,
   },
   {
     initialRouteName: 'Login',

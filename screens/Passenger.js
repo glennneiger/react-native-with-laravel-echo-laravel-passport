@@ -24,7 +24,7 @@ class Passenger extends Component {
         this.state = {
             access_token: null,
             csrf: null,
-            host: '192.168.1.13',
+            host: '10.1.1.72',
             user_id: null,
             channel: null,
             readyText: 'Not ready',

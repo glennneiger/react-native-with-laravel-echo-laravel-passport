@@ -26,7 +26,7 @@ class Rider extends Component {
 
         this.state = {
             access_token: null,
-            host: '192.168.1.13',
+            host: '10.1.1.72',
             user_id: null,
             channel: null,
             passengerChannel: null, // Specific channel from a passenger
@@ -143,7 +143,7 @@ class Rider extends Component {
 
             })
             .listen('MessageRider', event => {
-                console.log('Rider: MessageRider: ', event);
+                console.log(`Rider: MessageRider: ${this.state.user_id}`, event);
                 const { status, user_type, passenger_user_id, trip_request_id } = event;
 
                 if (status == 'pickup' && user_type == 'passenger') {

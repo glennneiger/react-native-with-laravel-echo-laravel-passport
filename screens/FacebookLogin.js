@@ -33,9 +33,8 @@ class FacebookLogin extends Component {
       if (type === 'success') {
         // Get the user's name using Facebook's Graph API
         const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-        this.setState({returnText: `Logged in!, Hi ${(await response.json())}!`});
+        this.setState({returnText: `Logged in!, Hi ${(await response.json()).name}!`});
         console.log('Token:', token);
-        
       } else {
         // type === 'cancel'
       }
