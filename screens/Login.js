@@ -63,10 +63,10 @@ class Login extends Component {
 
     axios.post(`https://${this.state.host}/oauth/login`, {
         grant_type: 'password',
-        client_id: '3', // Local
-        // client_id: '1',
-        client_secret: 'rty', // Local
-        // client_secret: 'mCs46si2yA6lrPzEZPMAj1Lvyss9XHBF6todAJtU', // Live
+        // client_id: '3', // Local
+        client_id: '1',
+        // client_secret: 'rty', // Local
+        client_secret: 'mCs46si2yA6lrPzEZPMAj1Lvyss9XHBF6todAJtU', // Live
         username: this.state.email,
         password: this.state.password,
         expo_token: this.state.expo_token,
