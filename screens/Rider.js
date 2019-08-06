@@ -26,8 +26,7 @@ class Rider extends Component {
 
         this.state = {
             access_token: null,
-            host: '192.168.10.176',
-            port: 8000,
+            host: 'ride.sr',
             user_id: null,
             channel: null,
             passengerChannel: null, // Specific channel from a passenger
@@ -66,7 +65,7 @@ class Rider extends Component {
         // Refer this to CheckSocket class with `that` variable xD
         const that = this;
 
-        axios.get(`http://${this.state.host}:${this.state.port}/api/initial`, {
+        axios.get(`https://${this.state.host}/api/initial`, {
           headers: {
             'Authorization': 'Bearer ' + this.state.access_token
             }
@@ -239,7 +238,7 @@ class Rider extends Component {
         // Refer this class with `that` variable :)
         const that = this;
 
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/accept`, {
+        axios.post(`https://${this.state.host}/api/trip/accept`, {
             trip_request_id: that.state.trip_request_id,
             car_id: that.state.car_id,
         },
@@ -270,7 +269,7 @@ class Rider extends Component {
         // Refer this class with `that` variable :)
         const that = this;
 
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/decline`, {
+        axios.post(`https://${this.state.host}/api/trip/decline`, {
             trip_request_id: that.state.trip_request_id
         },
         {
@@ -288,7 +287,7 @@ class Rider extends Component {
     }
 
     _5_1_1delayed() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/delayed`, {
+        axios.post(`https://${this.state.host}/api/trip/delayed`, {
             trip_id: this.state.trip_id,
             reason: 'Some reason for delay'
         },
@@ -309,7 +308,7 @@ class Rider extends Component {
     }
 
     _5_1_1cancelled() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/cancel`, {
+        axios.post(`https://${this.state.host}/api/trip/cancel`, {
             trip_id: this.state.trip_id
         },
         {
@@ -333,7 +332,7 @@ class Rider extends Component {
     }
 
     _6A_arrived() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/pickupArrived`, {
+        axios.post(`https://${this.state.host}/api/trip/pickupArrived`, {
             trip_id: this.state.trip_id
         },
         {
@@ -351,7 +350,7 @@ class Rider extends Component {
     }
 
     _7_start() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/start`, {
+        axios.post(`https://${this.state.host}/api/trip/start`, {
             trip_id: this.state.trip_id
         },
         {
@@ -371,7 +370,7 @@ class Rider extends Component {
     _8arrived() {
         this.disableLocationUpdate(); // Clear interval
 
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/destinationArrived`, {
+        axios.post(`https://${this.state.host}/api/trip/destinationArrived`, {
             trip_id: this.state.trip_id
         },
         {
@@ -389,7 +388,7 @@ class Rider extends Component {
     }
 
     _9_1rate() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/rate`, {
+        axios.post(`https://${this.state.host}/api/trip/rate`, {
             // trip_id: this.state.trip_id,
             trip_id: 22,
             rating: 4,

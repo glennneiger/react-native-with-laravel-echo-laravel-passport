@@ -18,7 +18,7 @@ class Login extends Component {
     // email: '8933396',
     password: 'timmy1420',
     // password: 'password',
-    host: '192.168.10.176:8000',
+    host: 'ride.sr',
     access_token: null,
     user_type: null,
     expo_token: null
@@ -61,7 +61,7 @@ class Login extends Component {
   login = () => {
     const that = this;
 
-    axios.post(`http://${this.state.host}/oauth/login`, {
+    axios.post(`https://${this.state.host}/oauth/login`, {
         grant_type: 'password',
         client_id: '3', // Local
         // client_id: '1',

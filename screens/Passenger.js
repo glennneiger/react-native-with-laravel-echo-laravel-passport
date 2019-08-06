@@ -24,8 +24,7 @@ class Passenger extends Component {
         this.state = {
             access_token: null,
             csrf: null,
-            host: '192.168.10.176',
-            port: 8000,
+            host: 'ride.sr',
             user_id: null,
             channel: null,
             readyText: 'Not ready',
@@ -57,7 +56,7 @@ class Passenger extends Component {
         // Refer this class with `that` variable xD
         const that = this;
 
-        axios.get(`http://${this.state.host}:${this.state.port}/api/initial`, {
+        axios.get(`https://${this.state.host}/api/initial`, {
           headers: {
             'Authorization': 'Bearer ' + this.state.access_token
             }
@@ -160,7 +159,7 @@ class Passenger extends Component {
     // }
 
     _1tripRequest() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip_requests/register`, {
+        axios.post(`https://${this.state.host}/api/trip_requests/register`, {
             lat_long_pickup: '5.8258842,-55.1955983',
             lat_long_destination: '5.8242192,-55.188131',
             pickup_description: 'Ik heb wit aan.',
@@ -191,7 +190,7 @@ class Passenger extends Component {
     }
 
     _5_1_2delayed() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/delayed`, {
+        axios.post(`https://${this.state.host}/api/trip/delayed`, {
             trip_id: this.state.trip_id,
             reason: 'Some reason for delay from passenger'
         },
@@ -210,7 +209,7 @@ class Passenger extends Component {
     }
 
     _5_1_2canelled() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/cancel`, {
+        axios.post(`https://${this.state.host}/api/trip/cancel`, {
             trip_id: this.state.trip_id
         },
         {
@@ -230,7 +229,7 @@ class Passenger extends Component {
     }
 
     _9_1rate() {
-        axios.post(`http://${this.state.host}:${this.state.port}/api/trip/rate`, {
+        axios.post(`https://${this.state.host}/api/trip/rate`, {
             trip_id: this.state.trip_id,
             rating: 3,
             tip: 19
