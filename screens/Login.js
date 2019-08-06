@@ -14,11 +14,11 @@ import { Permissions, Notifications } from 'expo';
 class Login extends Component {
 
   state = {
-    email: '8987273',
+    email: '8987274',
     // email: '8933396',
     password: 'timmy1420',
     // password: 'password',
-    host: '10.1.1.72:8000',
+    host: '192.168.10.176:8000',
     access_token: null,
     user_type: null,
     expo_token: null

@@ -15,7 +15,7 @@ import axios from 'axios';
 class CheckAuth extends Component {
   state = {
     access_token: null,
-    host: '192.168.1.13'
+    host: '192.168.1.107'
   };
 
   async componentDidMount() {
