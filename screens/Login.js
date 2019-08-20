@@ -6,7 +6,8 @@ import {
   StyleSheet,
   View,
   TextInput,
-  Clipboard
+  Clipboard,
+  Platform
 } from 'react-native';
 import axios from 'axios';
 import { Permissions, Notifications } from 'expo';
@@ -25,6 +26,19 @@ class Login extends Component {
   };
 
   async componentDidMount() {
+    console.log('Platform: ', Platform.OS);
+
+    if (Platform.OS == 'android') {
+      Expo.Notifications.createChannelAndroidAsync('ride_notification', {
+        name: 'Ride notification',
+        priority: 'max',
+        sound: true,
+        vibrate: [0, 250, 250, 250]
+      });
+
+      console.log('Ride notification channel created');
+    }
+
     var access_token = await Clipboard.getString();
     this.setState({access_token});
 
